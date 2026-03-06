@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenClaw 完全新手指南</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <style>
+        :root {
+            --primary: #ff6b35;
+            --primary-dark: #e55a2b;
+            --secondary: #1a1a2e;
+            --accent: #16213e;
+            --text: #2d3748;
+            --text-light: #4a5568;
+            --text-muted: #5a6b7d;
+            /* 提高对比度，从 #718096 调整 */
+            --bg: #f7fafc;
+            --bg-card: #ffffff;
+            --border: #e2e8f0;
+            --border-light: #edf2f7;
+            --code-bg: #1a1a2e;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%);
+            color: white;
+            padding: 80px 20px 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header-emoji {
+            font-size: 64px;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #fff 0%, #ffd700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-tagline {
+            font-size: 1.25rem;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 24px;
+        }
+
+        .header-slogan {
+            font-size: 1rem;
+            color: var(--primary);
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 40px;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        .nav-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            padding-left: 12px;
+        }
+
+        .nav-list {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 4px;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 10px 12px;
+            color: var(--text-light);
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover {
+            background: var(--border-light);
+            color: var(--text);
+        }
+
+        .nav-link.active {
+            background: rgba(255, 107, 53, 0.1);
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .main {
+            min-width: 0;
+        }
+
+        .content {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 48px;
+            box-shadow: var(--shadow);
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin: 48px 0 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        h2:first-child {
+            margin-top: 0;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 36px 0 18px;
+        }
+
+        h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 28px 0 14px;
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: var(--text-light);
+        }
+
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        pre {
+            background: var(--code-bg);
+            border-radius: 12px;
+            padding: 20px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        pre code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: #e2e8f0;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--border-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: var(--primary-dark);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0;
+            font-size: 0.95rem;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        th {
+            background: var(--secondary);
+            color: white;
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:nth-child(even) {
+            background: var(--bg);
+        }
+
+        tr:hover {
+            background: rgba(255, 107, 53, 0.05);
+        }
+
+        ul, ol {
+            margin: 16px 0;
+            padding-left: 24px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            color: var(--text-light);
+        }
+
+        blockquote {
+            border-left: 4px solid var(--primary);
+            background: rgba(255, 107, 53, 0.05);
+            padding: 20px 24px;
+            margin: 24px 0;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .alert {
+            padding: 20px 24px;
+            border-radius: 12px;
+            margin: 24px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+        }
+
+        .alert-info {
+            background: rgba(66, 153, 225, 0.1);
+            border-left: 4px solid #4299e1;
+        }
+
+        .alert-success {
+            background: rgba(72, 187, 120, 0.1);
+            border-left: 4px solid #48bb78;
+        }
+
+        .alert-warning {
+            background: rgba(237, 137, 54, 0.1);
+            border-left: 4px solid #ed8936;
+        }
+
+        .alert-danger {
+            background: rgba(245, 101, 101, 0.1);
+            border-left: 4px solid #f56565;
+        }
+
+        .tree {
+            background: var(--code-bg);
+            color: #a0aec0;
+            padding: 24px;
+            border-radius: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            line-height: 1.8;
+            margin: 20px 0;
+        }
+
+        .tree-line {
+            display: block;
+        }
+
+        .tree-branch {
+            color: #63b3ed;
+        }
+
+        .tree-leaf {
+            color: #68d391;
+        }
+
+        .tree-comment {
+            color: #718096;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+            margin: 48px 0;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s;
+            opacity: 0;
+            visibility: hidden;
+            font-size: 20px;
+            border: none;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            background: var(--primary-dark);
+            transform: translateY(-4px);
+        }
+
+        .back-to-top:focus-visible {
+            outline: 3px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        /* Mobile Navigation */
+        .mobile-nav-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+        }
+
+        .mobile-nav-toggle .hamburger {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text);
+            margin: 5px 0;
+            transition: all 0.3s;
+        }
+
+        .mobile-nav-toggle[aria-expanded="true"] .hamburger:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .mobile-nav-toggle[aria-expanded="true"] .hamburger:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-nav-toggle[aria-expanded="true"] .hamburger:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 280px;
+            height: 100vh;
+            background: var(--bg-card);
+            z-index: 1002;
+            padding: 20px;
+            box-shadow: -4px 0 20px rgba(0,0,0,0.1);
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .mobile-nav.active {
+            right: 0;
+        }
+
+        .mobile-nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .mobile-nav-title {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .mobile-nav-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-muted);
+            padding: 4px;
+        }
+
+        .mobile-nav-list {
+            list-style: none;
+        }
+
+        .mobile-nav-list li {
+            margin-bottom: 4px;
+        }
+
+        .mobile-nav-list a {
+            display: block;
+            padding: 12px 16px;
+            color: var(--text-light);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .mobile-nav-list a:hover,
+        .mobile-nav-list a:focus {
+            background: rgba(255, 107, 53, 0.1);
+            color: var(--primary);
+        }
+
+        .mobile-nav-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .mobile-nav-overlay.active {
+            opacity: 1;
+        }
+
+        caption {
+            caption-side: top;
+            text-align: left;
+            padding: 12px 16px;
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .mobile-nav-toggle {
+                display: block;
+            }
+
+            .mobile-nav {
+                display: block;
+            }
+
+            .mobile-nav-overlay {
+                display: block;
+            }
+
+            .content {
+                padding: 32px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .content {
+                padding: 24px;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            h3 {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="header-emoji">🦞</div>
+            <h1>OpenClaw 完全新手指南</h1>
+            <p class="header-tagline">个人 AI 助手本地部署与配置权威指南</p>
+            <p class="header-slogan">EXFOLIATE! EXFOLIATE!</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar">
+            <nav>
+                <p class="nav-title">目录导航 ✕</p>
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="#intro" class="nav-link">什么是 OpenClaw？</a></li>
+                    <li class="nav-item"><a href="#install" class="nav-link">安装指南</a></li>
+                    <li class="nav-item"><a href="#quickstart" class="nav-link">快速开始</a></li>
+                    <li class="nav-item"><a href="#workspace" class="nav-link">Workspace</a></li>
+                    <li class="nav-item"><a href="#config" class="nav-link">配置 openclaw.json</a></li>
+                    <li class="nav-item"><a href="#channels" class="nav-link">配置对话终端</a></li>
+                    <li class="nav-item"><a href="#multi-agent" class="nav-link">配置多智能体</a></li>
+                    <li class="nav-item"><a href="#skills" class="nav-link">技能安装</a></li>
+                    <li class="nav-item"><a href="#cli" class="nav-link">常用 CLI 命令</a></li>
+                    <li class="nav-item"><a href="#security" class="nav-link">安全最佳实践</a></li>
+                    <li class="nav-item"><a href="#troubleshooting" class="nav-link">故障排除</a></li>
+                    <li class="nav-item"><a href="#resources" class="nav-link">资源链接</a></li>
+                    <li class="nav-item"><a href="#summary" class="nav-link">总结</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main">
+            <article class="content">
+                <h2 id="intro">🚀 什么是 OpenClaw？</h2>
+                <p>OpenClaw 是一款<strong>个人 AI 助手</strong>，运行在你自己的设备上。它可以通过你已经在使用的通讯渠道（WhatsApp、Telegram、Slack、Discord、Google Chat、Signal、iMessage、Microsoft Teams、WebChat 等）与你交互，还支持语音对话、Canvas 可视化等高级功能。</p>
+                <p>OpenClaw 是一个<strong>本地优先</strong>的 AI 助手网关，它的核心设计理念是：</p>
+                <ul>
+                    <li><strong>个人化</strong>：为你个人服务，而非企业级多用户系统</li>
+                    <li><strong>本地运行</strong>：Gateway 运行在你的设备上（macOS、Linux、Windows WSL2）</li>
+                    <li><strong>多渠道接入</strong>：支持几乎所有主流通讯平台</li>
+                    <li><strong>功能丰富</strong>：浏览器控制、Canvas 可视化、语音交互、定时任务等</li>
+                </ul>
+                <h3>架构概览</h3>
+                <pre><code>WhatsApp / Telegram / Slack / Discord / Google Chat / Signal / iMessage / WebChat
+                   │
+                   ▼
+    ┌───────────────────────────────┐
+    │            Gateway            │
+    │       (控制平面 - 核心)        │
+    │     ws://127.0.0.1:18789      │
+    └──────────────┬────────────────┘
+                   │
+                   ├─ AI 智能体 (Agent)
+                   ├─ CLI 命令行工具
+                   ├─ WebChat 网页界面
+                   ├─ macOS/iOS/Android 客户端
+                   └─ 浏览器控制 (Chrome CDP)</code></pre>
+
+                <h2 id="install">📦 安装指南</h2>
+                <h3>系统要求</h3>
+                <ul>
+                    <li><strong>Node.js ≥ 22</strong>（必须）</li>
+                    <li><strong>操作系统</strong>：macOS、Linux、Windows (WSL2)</li>
+                    <li><strong>包管理器</strong>：npm、pnpm 或 bun</li>
+                </ul>
+                <h3>快速安装（推荐）</h3>
+                <h4>macOS / Linux</h4>
+                <pre><code>curl -fsSL https://openclaw.ai/install.sh | bash</code></pre>
+                <h4>Windows (PowerShell)</h4>
+                <pre><code>iwr -useb https://openclaw.ai/install.ps1 | iex</code></pre>
+                <h4>npm 安装</h4>
+                <pre><code># 使用 npm
+npm install -g openclaw@latest
+
+# 或使用 pnpm
+pnpm add -g openclaw@latest</code></pre>
+                <h3>运行引导向导</h3>
+                <pre><code># 完整安装向导 + 安装系统服务
+openclaw onboard --install-daemon
+
+# 仅运行配置向导
+openclaw onboard</code></pre>
+                <h3>检查安装</h3>
+                <pre><code># 查看 Gateway 状态
+openclaw gateway status
+
+# 打开控制面板
+openclaw dashboard</code></pre>
+
+                <h2 id="quickstart">⚡ 快速开始</h2>
+                <h3>1. 启动 Gateway</h3>
+                <pre><code># 前台运行（适合调试）
+openclaw gateway --port 18789 --verbose
+
+# 使用守护进程（后台运行）
+openclaw gateway start</code></pre>
+                <h3>2. 打开控制面板</h3>
+                <pre><code>openclaw dashboard
+# 或直接在浏览器访问：
+# http://127.0.0.1:18789</code></pre>
+                <h3>3. 发送测试消息</h3>
+                <pre><code>openclaw message send --to +15555550123 --message "Hello from OpenClaw"</code></pre>
+                <h3>4. 与智能体对话</h3>
+                <pre><code># 命令行直接对话
+openclaw agent --message "帮我总结今天的会议" --thinking high</code></pre>
+
+                <h2 id="workspace">📁 Workspace 工作空间</h2>
+                <p>Workspace 是 OpenClaw 智能体的<strong>工作目录</strong>，也是它读取上下文、保存记忆、执行工具操作的唯一位置。</p>
+                <h3>Workspace 结构</h3>
+                <div class="tree">
+                    <span class="tree-line"><span class="tree-branch">~/.openclaw/</span></span>
+                    <span class="tree-line">├── <span class="tree-leaf">openclaw.json</span> <span class="tree-comment"># 主配置文件</span></span>
+                    <span class="tree-line">├── <span class="tree-branch">workspace/</span> <span class="tree-comment"># 默认工作空间</span></span>
+                    <span class="tree-line">│   ├── <span class="tree-leaf">AGENTS.md</span> <span class="tree-comment"># 操作指令和记忆</span></span>
+                    <span class="tree-line">│   ├── <span class="tree-leaf">SOUL.md</span> <span class="tree-comment"># 人格、边界、语气</span></span>
+                    <span class="tree-line">│   ├── <span class="tree-leaf">TOOLS.md</span> <span class="tree-comment"># 工具使用笔记</span></span>
+                    <span class="tree-line">│   ├── <span class="tree-leaf">IDENTITY.md</span> <span class="tree-comment"># 助手名称/头像/表情</span></span>
+                    <span class="tree-line">│   ├── <span class="tree-leaf">USER.md</span> <span class="tree-comment"># 用户信息</span></span>
+                    <span class="tree-line">│   ├── <span class="tree-leaf">MEMORY.md</span> <span class="tree-comment"># 长期记忆（仅主会话加载）</span></span>
+                    <span class="tree-line">│   └── <span class="tree-branch">skills/</span> <span class="tree-comment"># 工作空间级技能</span></span>
+                    <span class="tree-line">├── <span class="tree-branch">agents/</span> <span class="tree-comment"># 多智能体会话存储</span></span>
+                    <span class="tree-line">├── <span class="tree-branch">skills/</span> <span class="tree-comment"># 全局技能</span></span>
+                    <span class="tree-line">└── <span class="tree-branch">credentials/</span> <span class="tree-comment"># 凭证存储</span></span>
+                </div>
+                <h3>核心文件说明</h3>
+                <p>Workspace 核心文件及其用途说明</p>
+                <table>
+                    <caption>核心文件说明</caption>
+                    <thead>
+                        <tr>
+                            <th>文件</th>
+                            <th>用途</th>
+                            <th>加载时机</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>AGENTS.md</code></td>
+                            <td>操作指令、连续性规则、重要记忆</td>
+                            <td>每会话首条消息</td>
+                        </tr>
+                        <tr>
+                            <td><code>SOUL.md</code></td>
+                            <td>人格定义、语气、边界</td>
+                            <td>每会话首条消息</td>
+                        </tr>
+                        <tr>
+                            <td><code>TOOLS.md</code></td>
+                            <td>环境特定的工具说明</td>
+                            <td>每会话首条消息</td>
+                        </tr>
+                        <tr>
+                            <td><code>USER.md</code></td>
+                            <td>用户信息、偏好、项目背景</td>
+                            <td>每会话首条消息</td>
+                        </tr>
+                        <tr>
+                            <td><code>IDENTITY.md</code></td>
+                            <td>助手身份（名称、表情、头像）</td>
+                            <td>每会话首条消息</td>
+                        </tr>
+                        <tr>
+                            <td><code>MEMORY.md</code></td>
+                            <td>长期记忆（安全敏感内容）</td>
+                            <td>仅主会话</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2 id="config">⚙️ 配置 openclaw.json</h2>
+                <p><code>~/.openclaw/openclaw.json</code> 是 OpenClaw 的核心配置文件，使用 <strong>JSON5</strong> 格式（支持注释和尾随逗号）。</p>
+                <h3>最小配置示例</h3>
+                <pre><code>{
+  "agents": {
+    "defaults": {
+      "workspace": "~/.openclaw/workspace"
+    }
+  },
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "botToken": "123456:ABC...",
+      "dmPolicy": "pairing",
+      "allowFrom": ["tg:123456789"]
+    }
+  }
+}</code></pre>
+                <h3>Agents 配置</h3>
+                <pre><code>{
+  "agents": {
+    "defaults": {
+      "workspace": "~/.openclaw/workspace",
+      "model": {
+        "primary": "anthropic/claude-sonnet-4-5",
+        "fallbacks": ["openai/gpt-5.2"]
+      },
+      "heartbeat": {
+        "every": "30m",
+        "target": "last"
+      }
+    }
+  }
+}</code></pre>
+                <h3>Session 会话管理</h3>
+                <pre><code>{
+  "session": {
+    "dmScope": "per-channel-peer",
+    "reset": {
+      "mode": "daily",
+      "atHour": 4,
+      "idleMinutes": 120
+    }
+  }
+}</code></pre>
+
+                <h2 id="channels">💬 配置对话终端（Channels）</h2>
+                <h3>DM 安全策略</h3>
+                <p>通讯渠道 DM 安全策略对比</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>策略</th>
+                            <th>说明</th>
+                            <th>适用场景</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>pairing</code></td>
+                            <td>未知发送者获得配对码，需主人批准</td>
+                            <td><strong>默认，最安全</strong></td>
+                        </tr>
+                        <tr>
+                            <td><code>allowlist</code></td>
+                            <td>仅允许列表中的发送者</td>
+                            <td>已知联系人</td>
+                        </tr>
+                        <tr>
+                            <td><code>open</code></td>
+                            <td>允许所有入站 DM</td>
+                            <td>公开机器人</td>
+                        </tr>
+                        <tr>
+                            <td><code>disabled</code></td>
+                            <td>忽略所有 DM</td>
+                            <td>仅群组使用</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h3>Telegram 配置</h3>
+                <pre><code>{
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "botToken": "your-bot-token",
+      "dmPolicy": "pairing",
+      "allowFrom": ["tg:123456789"],
+      "streaming": "partial"
+    }
+  }
+}</code></pre>
+
+                <h2 id="multi-agent">🤖 配置多智能体（Multi-Agent）</h2>
+                <pre><code>{
+  "agents": {
+    "defaults": {
+      "workspace": "~/.openclaw/workspace"
+    },
+    "list": [
+      {
+        "id": "main",
+        "description": "通用助手"
+      },
+      {
+        "id": "coder",
+        "workspace": "~/.openclaw/workspace-coder",
+        "description": "编程专家"
+      }
+    ]
+  }
+}</code></pre>
+
+                <h2 id="skills">🧩 技能安装</h2>
+                <div class="alert alert-info">
+                    <span>💡</span>
+                    <div>技能让你可以一键添加新能力，如图像生成、天气查询、GitHub 操作、视频处理等，无需手动配置每个工具。</div>
+                </div>
+                <p>OpenClaw 使用<strong>技能系统</strong>来扩展功能。技能是可复用的功能模块，可以通过 ClawHub CLI 从 <a href="https://clawhub.com" target="_blank">clawhub.com</a> 安装。</p>
+                <h3>安装 ClawHub CLI</h3>
+                <p>首先确保已安装 ClawHub 命令行工具：</p>
+                <pre><code>npm install -g clawhub</code></pre>
+                <h3>搜索技能</h3>
+                <p>在 ClawHub 上搜索你需要的技能：</p>
+                <pre><code># 搜索关键词
+clawhub search "postgres backups"
+clawhub search "image generation"
+clawhub search "weather"</code></pre>
+                <h3>安装技能</h3>
+                <p>找到想要的技能后，使用以下命令安装：</p>
+                <pre><code># 安装最新版本
+clawhub install baoyu-image-gen
+
+# 安装指定版本
+clawhub install baoyu-image-gen --version 1.2.3</code></pre>
+                <h3>管理技能</h3>
+                <p>ClawHub CLI 常用命令</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>命令</th>
+                            <th>说明</th>
+                            <th>示例</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>clawhub list</code></td>
+                            <td>列出已安装的技能</td>
+                            <td>查看当前工作空间的所有技能</td>
+                        </tr>
+                        <tr>
+                            <td><code>clawhub update &lt;skill&gt;</code></td>
+                            <td>更新指定技能到最新版本</td>
+                            <td><code>clawhub update baoyu-image-gen</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>clawhub update --all</code></td>
+                            <td>更新所有技能</td>
+                            <td>批量更新所有已安装技能</td>
+                        </tr>
+                        <tr>
+                            <td><code>clawhub update --force</code></td>
+                            <td>强制更新（忽略版本检查）</td>
+                            <td>解决版本冲突时使用</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h3>常用推荐技能</h3>
+                <p>热门 OpenClaw 技能推荐</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>技能名称</th>
+                            <th>功能</th>
+                            <th>安装命令</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>baoyu-image-gen</code></td>
+                            <td>AI 图像生成（OpenAI、Google、Replicate 等）</td>
+                            <td><code>clawhub install baoyu-image-gen</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>weather</code></td>
+                            <td>天气查询和预报</td>
+                            <td><code>clawhub install weather</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>github</code></td>
+                            <td>GitHub 操作（Issues、PR、代码审查）</td>
+                            <td><code>clawhub install github</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>video-frames</code></td>
+                            <td>视频帧提取和剪辑</td>
+                            <td><code>clawhub install video-frames</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>xurl</code></td>
+                            <td>X (Twitter) API 操作</td>
+                            <td><code>clawhub install xurl</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>find-skills</code></td>
+                            <td>帮助发现和安装技能</td>
+                            <td><code>clawhub install find-skills</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h3>技能工作原理</h3>
+                <p>技能是包含以下内容的文件夹：</p>
+                <div class="tree">
+                    <span class="tree-line"><span class="tree-branch">my-skill/</span></span>
+                    <span class="tree-line">├── <span class="tree-leaf">SKILL.md</span> <span class="tree-comment"># 技能定义和使用说明</span></span>
+                    <span class="tree-line">└── <span class="tree-branch">其他文件</span> <span class="tree-comment"># 脚本、配置等</span></span>
+                </div>
+                <div class="alert alert-success">
+                    <span>✅</span>
+                    <div>安装后，OpenClaw 会自动识别技能能力，并在相关任务触发时自动调用。无需额外配置。</div>
+                </div>
+                <h3>发布自己的技能</h3>
+                <p>如果你有自己开发的技能，可以发布到 ClawHub 分享：</p>
+                <pre><code># 登录 ClawHub
+clawhub login
+
+# 发布技能
+clawhub publish ./my-skill \
+  --slug my-skill \
+  --name "My Skill" \
+  --version 1.0.0 \
+  --changelog "Initial release"</code></pre>
+                <div class="alert alert-warning">
+                    <span>⚠️</span>
+                    <div><strong>注意：</strong>技能默认注册表为 https://clawhub.com，可通过 <code>CLAWHUB_REGISTRY</code> 环境变量或 <code>--registry</code> 参数覆盖。</div>
+                </div>
+
+                <h2 id="cli">⌨️ 常用 CLI 命令</h2>
+                <h3>Gateway 管理</h3>
+                <pre><code># 查看状态
+openclaw gateway status
+
+# 启动/停止/重启
+openclaw gateway start
+openclaw gateway stop
+openclaw gateway restart</code></pre>
+                <h3>配置管理</h3>
+                <pre><code># 运行配置向导
+openclaw onboard
+
+# 获取/设置配置值
+openclaw config get agents.defaults.workspace
+openclaw config set agents.defaults.model.primary "openai/gpt-5.2"</code></pre>
+                <h3>诊断工具</h3>
+                <pre><code># 健康检查
+openclaw doctor
+
+# 自动修复
+openclaw doctor --fix
+
+# 查看日志
+openclaw logs --follow</code></pre>
+
+                <h2 id="security">🔒 安全最佳实践</h2>
+                <div class="alert alert-danger">
+                    <span>⚠️</span>
+                    <div><strong>永远不要</strong>在未经保护的情况下公开 DM：<br>使用 <code>dmPolicy: "pairing"</code> 或 <code>allowlist</code> 而非 <code>open</code></div>
+                </div>
+                <h3>多用户环境</h3>
+                <pre><code>{
+  "session": {
+    "dmScope": "per-channel-peer"
+  }
+}</code></pre>
+                <h3>沙盒执行</h3>
+                <pre><code>{
+  "agents": {
+    "defaults": {
+      "sandbox": {
+        "mode": "non-main",
+        "scope": "agent"
+      }
+    }
+  }
+}</code></pre>
+
+                <h2 id="troubleshooting">🔧 故障排除</h2>
+                <p>常见错误及解决方案</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>错误</th>
+                            <th>原因</th>
+                            <th>解决</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>Config validation failed</code></td>
+                            <td>配置格式错误</td>
+                            <td>运行 <code>openclaw doctor</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>Unauthorized</code></td>
+                            <td>API Key 无效</td>
+                            <td>检查 <code>auth</code> 配置</td>
+                        </tr>
+                        <tr>
+                            <td><code>Session not found</code></td>
+                            <td>会话已过期</td>
+                            <td>发送 <code>/new</code> 重置</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2 id="resources">🔗 资源链接</h2>
+                <ul>
+                    <li><strong>官网</strong>: <a href="https://openclaw.ai" target="_blank">openclaw.ai</a></li>
+                    <li><strong>文档</strong>: <a href="https://docs.openclaw.ai" target="_blank">docs.openclaw.ai</a></li>
+                    <li><strong>GitHub</strong>: <a href="https://github.com/openclaw/openclaw" target="_blank">github.com/openclaw/openclaw</a></li>
+                    <li><strong>Discord</strong>: <a href="https://discord.gg/clawd" target="_blank">discord.gg/clawd</a></li>
+                    <li><strong>技能市场</strong>: <a href="https://clawhub.com" target="_blank">clawhub.com</a></li>
+                </ul>
+
+                <h2 id="summary">📝 总结</h2>
+                <p>OpenClaw 是一个功能强大、灵活的个人 AI 助手平台。关键要点：</p>
+                <ol>
+                    <li><strong>Gateway 是核心</strong> - 所有功能都围绕 Gateway 展开</li>
+                    <li><strong>Workspace 是工作空间</strong> - 保持文件整洁，控制 token 使用</li>
+                    <li><strong>配置即代码</strong> - <code>openclaw.json</code> 定义一切行为</li>
+                    <li><strong>安全第一</strong> - 默认使用配对模式，谨慎开放 DM</li>
+                    <li><strong>多智能体支持</strong> - 可以为不同任务创建专门的助手</li>
+                </ol>
+                <hr>
+                <p style="text-align: center; color: var(--text-muted);">祝使用愉快！🦞</p>
+            </article>
+        </main>
+    </div>
+
+    <button class="back-to-top" aria-label="返回顶部">↑</button>
+
+    <!-- Mobile Navigation Toggle -->
+    <button class="mobile-nav-toggle" aria-label="打开导航" aria-expanded="false">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+    </button>
+
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav" aria-hidden="true">
+        <div class="mobile-nav-header">
+            <span class="mobile-nav-title">目录导航</span>
+            <button class="mobile-nav-close" aria-label="关闭导航">×</button>
+        </div>
+        <ul class="mobile-nav-list">
+            <li><a href="#intro">什么是 OpenClaw？</a></li>
+            <li><a href="#install">安装指南</a></li>
+            <li><a href="#quickstart">快速开始</a></li>
+            <li><a href="#workspace">Workspace 工作空间</a></li>
+            <li><a href="#config">配置 openclaw.json</a></li>
+            <li><a href="#channels">配置对话终端</a></li>
+            <li><a href="#multi-agent">配置多智能体</a></li>
+            <li><a href="#skills">技能安装</a></li>
+            <li><a href="#cli">常用 CLI 命令</a></li>
+            <li><a href="#security">安全最佳实践</a></li>
+            <li><a href="#troubleshooting">故障排除</a></li>
+            <li><a href="#resources">资源链接</a></li>
+            <li><a href="#summary">总结</a></li>
+        </ul>
+    </nav>
+    <div class="mobile-nav-overlay"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+        // Highlight.js
+        hljs.highlightAll();
+
+        // Back to top button - improved accessibility
+        const backToTop = document.querySelector('.back-to-top');
+
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        backToTop.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+
+        window.addEventListener('scroll', () => {
+            const shouldShow = window.scrollY > 300;
+            backToTop.classList.toggle('visible', shouldShow);
+            backToTop.setAttribute('aria-hidden', !shouldShow);
+            backToTop.setAttribute('tabindex', shouldShow ? '0' : '-1');
+        });
+
+        // Active nav link
+        const sections = document.querySelectorAll('h2[id]');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Mobile Navigation
+        const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
+        const mobileNav = document.querySelector('.mobile-nav');
+        const mobileNavClose = document.querySelector('.mobile-nav-close');
+        const mobileNavOverlay = document.querySelector('.mobile-nav-overlay');
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-list a');
+
+        function openMobileNav() {
+            mobileNav.classList.add('active');
+            mobileNavOverlay.classList.add('active');
+            mobileNavToggle.setAttribute('aria-expanded', 'true');
+            mobileNav.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMobileNav() {
+            mobileNav.classList.remove('active');
+            mobileNavOverlay.classList.remove('active');
+            mobileNavToggle.setAttribute('aria-expanded', 'false');
+            mobileNav.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+
+        mobileNavToggle.addEventListener('click', openMobileNav);
+        mobileNavClose.addEventListener('click', closeMobileNav);
+        mobileNavOverlay.addEventListener('click', closeMobileNav);
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', closeMobileNav);
+        });
+
+        // Close mobile nav on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && mobileNav.classList.contains('active')) {
+                closeMobileNav();
+            }
+        });
+    </script>
+</body>
+</html>
